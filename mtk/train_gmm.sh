@@ -11,9 +11,8 @@
 #
 #    input_dir/
 #       lexicon.txt
-#       lexicon_nosil.txt
 #       phones.txt
-#       task.arpabo
+#       task.arpa
 #       transcripts
 #
 #       audio_dir/
@@ -34,9 +33,10 @@
 #    exp_dir
 #    feat_dir
 #    data_dir
-# 
+#
 
 
+. ./path.sh
 
 cmd=utils/run.pl
 train_monophones=1
@@ -86,7 +86,7 @@ if [ "$train_monophones" -eq "1" ]; then
         || printf "\n####\n#### ERROR: train_mono.sh \n####\n\n" \
         || exit 1;
 
-    ../../../src/gmmbin/gmm-info ${exp_dir}/monophones/final.mdl
+    gmm-info ${exp_dir}/monophones/final.mdl
 
 
     printf "#### Align Monophones ####\n";
@@ -104,7 +104,7 @@ if [ "$train_monophones" -eq "1" ]; then
         || printf "\n####\n#### ERROR: align_si.sh \n####\n\n" \
         || exit 1;
 
-    
+
     printf "\n####===========================####\n";
     printf "#### END TRAINING MONOPHONES ####\n";
     printf "####===========================####\n\n";
@@ -135,7 +135,7 @@ if [ "$train_triphones" -eq "1" ]; then
         || printf "\n####\n#### ERROR: train_deltas.sh \n####\n\n" \
         || exit 1;
 
-    ../../../src/gmmbin/gmm-info ${exp_dir}/triphones/final.mdl
+    gmm-info ${exp_dir}/triphones/final.mdl
 
 
     printf "### Align Triphones ###\n"
@@ -153,7 +153,7 @@ if [ "$train_triphones" -eq "1" ]; then
         || printf "\n####\n#### ERROR: align_si.sh \n####\n\n" \
         || exit 1;
 
-    
+
     printf "\n####========================####\n";
     printf "#### END TRAINING TRIPHONES ####\n";
     printf "####========================####\n\n";
@@ -164,7 +164,7 @@ fi
 
 
 if [ "$adapt_models" -eq "1" ]; then
-    
+
     printf "\n####==========================####\n";
     printf "#### BEGIN SPEAKER ADAPTATION ####\n";
     printf "####==========================####\n\n";
@@ -183,7 +183,7 @@ if [ "$adapt_models" -eq "1" ]; then
         || printf "\n####\n#### ERROR: train_lda_mllt.sh \n####\n\n" \
         || exit 1;
 
-    ../../../src/gmmbin/gmm-info ${exp_dir}/triphones_lda_mllt/final.mdl
+    gmm-info ${exp_dir}/triphones_lda_mllt/final.mdl
 
 
     printf "### Align LDA + MLLT Triphones ###\n"
@@ -218,7 +218,7 @@ if [ "$adapt_models" -eq "1" ]; then
         || printf "\n####\n#### ERROR: train_sat.sh \n####\n\n" \
         || exit 1;
 
-    ../../../src/gmmbin/gmm-info ${exp_dir}/triphones_lda_mllt_sat/final.mdl
+    gmm-info ${exp_dir}/triphones_lda_mllt_sat/final.mdl
 
 
     printf "### Align LDA + MLLT + SAT Triphones ###\n"
@@ -241,7 +241,7 @@ if [ "$save_model" -eq "1" ]; then
 
     # Copy all necessary files to use new LM with this acoustic model
     # and only necessary files to save space
-    
+
     cp data_${corpus_name} ${corpus_name}_${run}
 
     # delete unneeded files
@@ -259,13 +259,9 @@ if [ "$save_model" -eq "1" ]; then
 
     # move for storage
     mkdir compressed_experiments
-    
+
     mv ${corpus_name}_${run}.tar.gz compressed_experiments/${corpus_name}_${run}.tar.gz
 fi
 
-
-
-
-exit;
 
 

@@ -10,7 +10,7 @@ To get started, `multi-task-kaldi` should be cloned and moved into the `egs` dir
 
 If you're used to typical Kaldi `egs`, you should know that all the scripts here in `utils` / `local` / `steps` exist in this repo. That is, they do not link back to the `wsj` example. This was done to make custom changes to the scripts, making them more readable.
 
-
+This repository is adapt from Joshua Meyer (2017) to work with large dataset.
 
 Creating the `input_task` dir
 ------------------------------------
@@ -23,25 +23,23 @@ Here is an example of the structure of my `input_task` directory for the task ca
 
 ```
 input_my-task/
-├── lexicon_nosil.txt -> /data/my-task/lexicon/lexicon_nosil.txt
 ├── lexicon.txt -> /data/my-task/lexicon/lexicon.txt
-├── task.arpabo -> /data/my-task/lm/task.arpabo
-├── test_audio_path -> /data/my-task/audio/test_audio_path
-├── train_audio_path -> /data/my-task/audio/train_audio_path
+├── task.arpa -> /data/my-task/lm/task.arpa
+├── wav_train.scp -> /data/my_task/audio/wav_train.scp 
+├── wav_test.scp -> /data/my_task/audio/wav_test.scp 
 ├── transcripts.test -> /data/my-task/audio/transcripts.test
 └── transcripts.train -> /data/my-task/audio/transcripts.train
 
-0 directories, 7 files
+0 directories, 6 files
 ```
 
 Most of these files are standard Kaldi format, and more detailed descriptions of them can be found on [the official docs](http://kaldi-asr.org/doc/data_prep.html).
 
 
-- `lexicon_nosil.txt` // Standard Kaldi // phonetic dictionary without silence phonemes
 - `lexicon.txt` // Standard Kaldi // phonetic dictionary with silence phonemes
-- `task.arpabo` // Standard Kaldi // language model in ARPA back-off format
-- `test_audio_path` // Custom file! // one-line text file containing absolute path to dir of audio files (eg. WAV) for testing
-- `train_audio_path` // Custom file! // one-line text file containing absolute path to dir of audio files (eg. WAV) for training
+- `task.arpa` // Standard Kaldi // language model in ARPA format
+- `wav_train.scp` // Custom file! // A typical kaldi list of audio files, but with only the train utterances
+- `wav_test.scp` // Custom file! // A typical kaldi  list of audio files, but with only the test utterances
 - `transcripts.test` // Custom file! // A typical Kaldi transcript file, but with only the test utterances
 - `transcripts.train` // Custom file! // A typical Kaldi transcript file, but with only the train utterances
 
@@ -54,7 +52,6 @@ Running the scripts
 
 
 The scripts will name files and directories dynamically. You will define the name of your input data (ie. task or language) in the initial `input_` dir, and then the rest of the generated dirs and files will be named accordingly. For instance, if you have `input_your-task`, then the GMM alignment stage will create `data_your-task`, `plp_your-task` and `exp_your-task`.
-
 
 
 

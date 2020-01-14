@@ -13,7 +13,7 @@
 #
 # OUTPUT:
 #
-# 
+#
 
 cmd="utils/run.pl"
 decode_beam=5
@@ -34,17 +34,17 @@ if [ "$#" -ne 5 ]; then
 fi
 
 
-
+. ./path.sh
 
 
 if [ 1 ]; then
-    
+
     printf "\n####================####\n";
     printf "#### BEGIN DECODING ####\n";
     printf "####================####\n\n";
-    
+
     # DECODE WITH TRIPHONES WITH SAT ADJUSTED FEATURES
-    
+
     # steps/decode_fmllr.sh --cmd "$cmd" \
     #     --nj $num_processors \
     #     ${exp_dir}/triphones_lda_mllt_sat/graph \
@@ -54,11 +54,11 @@ if [ 1 ]; then
     #     $silence_phone \
     #     || exit 1;
 
-    
+
     # DECODE WITH REGULAR TRIPHONES WITH VANILLA DELTA FEATURES
 
     printf "\n ### Decoding with $num_jobs jobs  ### "
-    
+
     steps/decode.sh \
         --cmd "$cmd" \
         --nj $num_jobs \
@@ -73,10 +73,10 @@ if [ 1 ]; then
         "SIL" \
         || printf "\n####\n#### ERROR: decode.sh \n####\n\n" \
         || exit 1;
-    
+
 
     printf "#### BEGIN CALCULATE WER ####\n";
-    
+
     for x in $test_dir/decode; do
         [ -d $x ] && grep "WER" $x/wer_* | utils/best_wer.sh > WER_triphones_${suffix}.txt;
     done
@@ -90,11 +90,11 @@ if [ 1 ]; then
 
     echo "###"
     echo "acoustic model = $model" >> WER_triphones_${suffix}.txt
-    ../../../src/gmmbin/gmm-info $model >> WER_triphones_${suffix}.txt
-    
+    gmm-info $model >> WER_triphones_${suffix}.txt
+
     echo "###"
     echo "test dir = $test_dir" >> WER_triphones_${suffix}.txt
-    
+
 fi
 
 exit;
