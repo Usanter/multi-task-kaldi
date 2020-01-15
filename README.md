@@ -23,6 +23,8 @@ Here is an example of the structure of my `input_task` directory for the task ca
 
 ```
 input_my-task/
+├── [segments_train] -> /data/my-task/audio/segments_train
+├── [segments_test] -> /data/my-task/audio/segments_test
 ├── lexicon.txt -> /data/my-task/lexicon/lexicon.txt
 ├── task.arpa -> /data/my-task/lm/task.arpa
 ├── wav_train.scp -> /data/my_task/audio/wav_train.scp 
@@ -30,7 +32,7 @@ input_my-task/
 ├── transcripts.test -> /data/my-task/audio/transcripts.test
 └── transcripts.train -> /data/my-task/audio/transcripts.train
 
-0 directories, 6 files
+0 directories, 6 (+2 optional) files
 ```
 
 Most of these files are standard Kaldi format, and more detailed descriptions of them can be found on [the official docs](http://kaldi-asr.org/doc/data_prep.html).
@@ -42,7 +44,8 @@ Most of these files are standard Kaldi format, and more detailed descriptions of
 - `wav_test.scp` // Custom file! // A typical kaldi  list of audio files, but with only the test utterances
 - `transcripts.test` // Custom file! // A typical Kaldi transcript file, but with only the test utterances
 - `transcripts.train` // Custom file! // A typical Kaldi transcript file, but with only the train utterances
-
+- `segments_train` // Custom file! // A typical Kaldi segments file but with only the train utterances (this is an optional file)
+- `segments_test` // Custom file! // A typical Kaldi segments file but with only the test utterances (this is an optional file)
 
 
 

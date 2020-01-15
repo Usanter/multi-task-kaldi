@@ -7,7 +7,7 @@
 # all the language-model, pronunciation dictionary, context-dependency,
 # and HMM structure in our model.  The output is a Finite State Transducer
 # that has word-ids on the output, and pdf-ids on the input (these are indexes
-# that resolve to Gaussian Mixture Models).  
+# that resolve to Gaussian Mixture Models).
 # See
 #  http://kaldi.sourceforge.net/graph_recipe_test.html
 # (this is compiled from this repository using Doxygen,
@@ -19,7 +19,7 @@ P=1
 tscale=1.0
 loopscale=0.1
 
-for x in `seq 5`; do 
+for x in `seq 5`; do
     [ "$1" == "--mono" ] && N=1 && P=0 && shift;
     [ "$1" == "--quinphone" ] && N=5 && P=2 && shift;
     [ "$1" == "--transition-scale" ] && tscale=$2 && shift 2;
@@ -52,7 +52,7 @@ model=$6
 # new dir for decoding
 cp -r $data_dir/lang $lang_decode_dir
 cp -r $data_dir/local/dict $lang_decode_dir/dict
-cp $input_dir/task.arpabo $lang_decode_dir/lm.arpa
+cp $input_dir/lm/task.arpa $lang_decode_dir/lm.arpa
 
 
 
@@ -162,7 +162,7 @@ if [[ ! -s $graph_dir/Ha.fst || $graph_dir/Ha.fst -ot $model  \
         $model \
         > $graph_dir/Ha.fst \
         || exit 1;
-    
+
 fi
 
 
@@ -178,7 +178,7 @@ echo "### compile HCLGa.fst ###"
 if [[ ! -s $graph_dir/HCLGa.fst || \
     $graph_dir/HCLGa.fst -ot $graph_dir/Ha.fst || \
     $graph_dir/HCLGa.fst -ot $clg ]]; then
-    
+
     fsttablecompose \
         $graph_dir/Ha.fst $clg | \
         fstdeterminizestar --use-log=true | \
@@ -187,7 +187,7 @@ if [[ ! -s $graph_dir/HCLGa.fst || \
         fstminimizeencoded \
         > $graph_dir/HCLGa.fst \
         || exit 1;
-    
+
     fstisstochastic $graph_dir/HCLGa.fst \
         || echo "HCLGa is not stochastic"
 fi
@@ -203,15 +203,15 @@ echo "### compile HCLG.fst ###"
 
 if [[ ! -s $graph_dir/HCLG.fst || \
     $graph_dir/HCLG.fst -ot $graph_dir/HCLGa.fst ]]; then
-    
+
     add-self-loops --self-loop-scale=$loopscale --reorder=true \
         $model \
         < $graph_dir/HCLGa.fst \
         > $graph_dir/HCLG.fst \
         || exit 1;
-    
+
     if [ $tscale == 1.0 -a $loopscale == 1.0 ]; then
-        # No point doing this test if transition-scale not 1, as it will fail. 
+        # No point doing this test if transition-scale not 1, as it will fail.
         fstisstochastic $graph_dir/HCLG.fst \
             || echo "[info]: final HCLG is not stochastic."
     fi
@@ -232,7 +232,7 @@ cp $lang_decode_dir/phones/align_lexicon.* $graph_dir/phones/ 2>/dev/null
 cp $lang_decode_dir/phones/disambig.{txt,int} $graph_dir/phones/ 2> /dev/null
 cp $lang_decode_dir/phones/silence.csl $graph_dir/phones/ || exit 1;
 # ignore the error if it's not there.
-cp $lang_decode_dir/phones.txt $graph_dir/ 2> /dev/null 
+cp $lang_decode_dir/phones.txt $graph_dir/ 2> /dev/null
 
 # to make const fst:
 # fstconvert --fst_type=const $graph_dir/HCLG.fst $graph_dir/HCLG_c.fst

@@ -74,9 +74,11 @@ utils/split_data.sh $data_dir $num_jobs || exit 1;
 #         || printf "\n####\n#### ERROR: make_mfcc.sh \n####\n\n" \
 #         || exit 1;
 
+#utils/fix_data_dir.sh $data_dir
 #     steps/compute_cmvn_stats.sh \
 #         ${data_dir}/${dir} \
 #         ${exp_dir}/make_mfcc_log/${dir} \
 #         $feat_dir \
 #         || printf "\n####\n#### ERROR: compute_cmvn_stats.sh \n####\n\n" \
 #         || exit 1;
+#utils/fix_data_dir.sh $data_dir

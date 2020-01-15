@@ -11,7 +11,7 @@
 #    $transcripts \
 #    $data_dir \
 #    $data_type
-
+#    [$segments]
 
 # INPUT:
 #
@@ -19,6 +19,7 @@
 #
 #    transcripts
 #
+#    [segments]
 
 # OUTPUT:
 
@@ -36,6 +37,17 @@ transcripts=$2
 data_dir=$3
 # data_type = train or test
 data_type=$4
+
+is_segmented=false
+# Check if segments files is provided
+if [ "$#" -eq 5 ]; then
+    echo "$0: Segments file is provided"
+    segments=$5
+    is_segmented=true
+
+fi
+
+
 
 #echo "$0: looking for audio data in $audio_dir"
 
@@ -60,6 +72,12 @@ local_dir=${data_dir}/local
 #ls -1 $audio_dir > $local_dir/tmp/audio.list
 #awk -F"." '{print $1}' $local_dir/tmp/audio.list > $local_dir/tmp/utt-ids-audio.txt
 awk -F" " '{print $1}' $wav_tmp > $local_dir/tmp/utt-ids-audio.txt
+# If there is a segments file, the utt-ids should be from this file not from the .scp file
+if $is_segments;then
+    # Remove the one generated using wav.scp
+    rm -f $local_dir/tmp/utt-ids-audio.txt
+    awk -F" " '{print $1}' $segments > $local_dir/tmp/utt-ids-audio.txt
+fi
 awk -F" " '{print $1}' $transcripts > $local_dir/tmp/utt-ids-transcripts.txt
 for fileName in $local_dir/tmp/utt-ids-audio.txt $local_dir/tmp/utt-ids-transcripts.txt; do
     LC_ALL=C sort -i $fileName -o $fileName;
@@ -83,6 +101,7 @@ cp $wav_tmp $local_dir/tmp/${data_type}_wav.scp
 cp $transcripts $local_dir/tmp/${data_type}.txt
 #local/create_txt.pl $transcripts $local_dir/tmp/audio.list > $local_dir/tmp/${data_type}.txt
 
+
 mkdir -p $data_dir/$data_type
 # Make wav.scp
 cp $data_dir/local/tmp/${data_type}_wav.scp $data_dir/$data_type/wav.scp
@@ -92,6 +111,11 @@ cp $data_dir/local/tmp/${data_type}.txt $data_dir/$data_type/text
 cat $data_dir/$data_type/text | awk '{printf("%s %s\n", $1, $1);}' > $data_dir/$data_type/utt2spk
 # Make spk2utt
 utils/utt2spk_to_spk2utt.pl <$data_dir/$data_type/utt2spk > $data_dir/$data_type/spk2utt
+# Make spegments
+if $is_segments;then
+    cp $segments $data_dir/$data_type/segments
+fi
+
 #clean up temp files
 rm -rf $local_dir/tmp
 

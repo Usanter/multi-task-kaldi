@@ -5,7 +5,7 @@
 
 # USAGE:
 #
-# 
+#
 # INPUT:
 #
 #
@@ -30,14 +30,15 @@ done;
 
 
 echo "$0: Extracting phonemes from $input_dir/lexicon.txt and saving them to $input_dir/phones.txt"
-cut -d' ' -f2- $input_dir/lexicon.txt | grep -o -E '\w+' | LC_ALL=C sort -u > $input_dir/phones.txt
+#cut -d' ' -f3- $input_dir/lexicon.txt | grep -o -E '\w+' | LC_ALL=C sort -u > $input_dir/phones.txt
+cut -d' ' -f2- $input_dir/lexicon.txt |sed s/' '/'\n'/g | sort -u | uniq > $input_dir/phones.txt
 
 
 # move lexicon files
 local/prepare_dict.sh \
     $data_dir \
     $input_dir \
-    "SIL" \
+    "sil" \
     || printf "\n####\n#### ERROR: prepare_dict.sh\n####\n\n" \
     || exit 1;
 
