@@ -23,15 +23,18 @@ Here is an example of the structure of my `input_task` directory for the task ca
 
 ```
 input_my-task/
-├── [segments_train] -> /data/my-task/audio/segments_train
-├── [segments_test] -> /data/my-task/audio/segments_test
-├── lexicon.txt -> /data/my-task/lexicon/lexicon.txt
-├── task.arpa -> /data/my-task/lm/task.arpa
-├── wav_train.scp -> /data/my_task/audio/wav_train.scp 
-├── wav_test.scp -> /data/my_task/audio/wav_test.scp 
-├── transcripts.test -> /data/my-task/audio/transcripts.test
-└── transcripts.train -> /data/my-task/audio/transcripts.train
-
+├── audio  - Directory 
+│    ├── [segments_train] -> /data/my-task/audio/segments_train
+│    ├── [segments_test] -> /data/my-task/audio/segments_test
+│    ├── wav_train.scp -> /data/my_task/audio/wav_train.scp 
+│    ├── wav_test.scp -> /data/my_task/audio/wav_test.scp 
+│    ├── transcripts.test -> /data/my-task/audio/transcripts.test
+│    └── transcripts.train -> /data/my-task/audio/transcripts.train
+│
+├── lexicon  - Directory 
+│    └── lexicon.txt -> /data/my-task/lexicon/lexicon.txt
+└─- lm  - Directory 
+     └──  task.arpa -> /data/my-task/lm/task.arpa
 0 directories, 6 (+2 optional) files
 ```
 
