@@ -35,7 +35,7 @@ input_my-task/
 │    └── lexicon.txt -> /data/my-task/lexicon/lexicon.txt
 └─- lm  - Directory 
      └──  task.arpa -> /data/my-task/lm/task.arpa
-0 directories, 6 (+2 optional) files
+3 directories, 6 (+2 optional) files
 ```
 
 Most of these files are standard Kaldi format, and more detailed descriptions of them can be found on [the official docs](http://kaldi-asr.org/doc/data_prep.html).

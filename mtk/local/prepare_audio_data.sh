@@ -38,12 +38,12 @@ data_dir=$3
 # data_type = train or test
 data_type=$4
 
-is_segmented=false
+is_segments=false
 # Check if segments files is provided
 if [ "$#" -eq 5 ]; then
     echo "$0: Segments file is provided"
     segments=$5
-    is_segmented=true
+    is_segments=true
 
 fi
 
@@ -68,7 +68,7 @@ local_dir=${data_dir}/local
 ###                                                     ###
 ### Check if utt IDs in transcripts and audio dir match ###
 ###                                                     ###
-
+echo "$0: Check if utt IDs in transcripts and audio match"
 #ls -1 $audio_dir > $local_dir/tmp/audio.list
 #awk -F"." '{print $1}' $local_dir/tmp/audio.list > $local_dir/tmp/utt-ids-audio.txt
 awk -F" " '{print $1}' $wav_tmp > $local_dir/tmp/utt-ids-audio.txt
@@ -93,7 +93,7 @@ fi
 ###                                         ###
 ### Make wav.scp & text & utt2spk & spk2utt ###
 ###                                         ###
-
+echo "$0: Make wav.scp, text, utt2spk and spk2utt"
 # make two-column lists of utt IDs and path to audio
 cp $wav_tmp $local_dir/tmp/${data_type}_wav.scp
 #local/create_wav_scp.pl $audio_dir $local_dir/tmp/audio.list > $local_dir/tmp/${data_type}_wav.scp
@@ -104,39 +104,40 @@ cp $transcripts $local_dir/tmp/${data_type}.txt
 
 mkdir -p $data_dir/$data_type
 # Make wav.scp
-cp $data_dir/local/tmp/${data_type}_wav.scp $data_dir/$data_type/wav.scp
+
+cat $data_dir/local/tmp/${data_type}_wav.scp | sort -u > $data_dir/$data_type/wav.scp
 # Make text
-cp $data_dir/local/tmp/${data_type}.txt $data_dir/$data_type/text
+cat $data_dir/local/tmp/${data_type}.txt | sort -u > $data_dir/$data_type/text
 # Make utt2spk
-cat $data_dir/$data_type/text | awk '{printf("%s %s\n", $1, $1);}' > $data_dir/$data_type/utt2spk
+cat $data_dir/$data_type/text | awk '{printf("%s %s\n", $1, $1);}' | sort -u > $data_dir/$data_type/utt2spk
 # Make spk2utt
 utils/utt2spk_to_spk2utt.pl <$data_dir/$data_type/utt2spk > $data_dir/$data_type/spk2utt
 # Make spegments
 if $is_segments;then
-    cp $segments $data_dir/$data_type/segments
+    cat $segments | sort -u > $data_dir/$data_type/segments
 fi
 
 #clean up temp files
-rm -rf $local_dir/tmp
+#rm -rf $local_dir/tmp
 
 
-
+#echo "$0: Preparation done, print informations"
 ###                 ###
 ### Print some info ###
 ###                 ###
 
 ## get total number of seconds of WAVs in wav.scp
-TOTAL_SECS=0
-while IFS='' read -r line || [[ -n "$line" ]]; do
-    line=( $line )
-    file=${line[1]}
-    SECS="$( soxi -D $file )"
-    TOTAL_SECS=$( echo "$TOTAL_SECS + $SECS" | bc )
-done < "$data_dir/$data_type/wav.scp"
+#TOTAL_SECS=0
+#while IFS='' read -r line || [[ -n "$line" ]]; do
+#    line=( $line )
+#    file=${line[1]}
+#    SECS="$( soxi -D $file )"
+#    TOTAL_SECS=$( echo "$TOTAL_SECS + $SECS" | bc )
+#done < "$data_dir/$data_type/wav.scp"
 
 # Calculate hours and print to screen
-total_hours=$( echo "scale=2;$TOTAL_SECS / 60 / 60" | bc )
-echo ""
-echo " $total_hours hours of audio for training "
-echo " in $data_dir/$data_type/wav.scp"
-echo ""
+#total_hours=$( echo "scale=2;$TOTAL_SECS / 60 / 60" | bc )
+#echo ""
+#echo " $total_hours hours of audio for training "
+#echo " in $data_dir/$data_type/wav.scp"
+#echo ""

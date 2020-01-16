@@ -151,10 +151,11 @@ if [ "$prep_train_audio" -eq "1" ]; then
     while read LINE
     do
         # Split the input line to get the utt_id and the wav path
-        IFS=" "
-        read -ra tokens <<< "$LINE"
+        #IFS=" "
+        #read -ra tokens <<< "$LINE"
         # Change the utt_id with by adding corpus_name into the new wav.scp
-        echo "${corpus_name}_${tokens[0]} ${tokens[1]}" >> $input_dir/audio/wav_train_tmp.scp
+        #echo "${corpus_name}_$LINE" #>> $input_dir/audio/wav_train_tmp.scp
+        echo "${corpus_name}_$LINE" >> $input_dir/audio/wav_train_tmp.scp
 
     done < $input_dir/audio/wav_train.scp
 
