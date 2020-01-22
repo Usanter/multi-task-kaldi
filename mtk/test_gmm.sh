@@ -26,8 +26,9 @@ model=$2
 test_dir=$3
 suffix=$4
 num_jobs=$5
+lm_large=$6
 
-if [ "$#" -ne 5 ]; then
+if [ "$#" -ne 6 ]; then
     echo "ERROR: $0"
     echo "USAGE: $0 <graph> <model> <test_dir> <suffix>"
     exit 1
@@ -37,7 +38,6 @@ fi
 . ./path.sh
 
 
-if [ 1 ]; then
 
     printf "\n####================####\n";
     printf "#### BEGIN DECODING ####\n";
@@ -70,14 +70,23 @@ if [ 1 ]; then
         $test_dir \
         $test_dir/decode \
         "SPOKEN_NOISE" \
-        "SIL" \
+        "sil" \
         || printf "\n####\n#### ERROR: decode.sh \n####\n\n" \
         || exit 1;
 
+    decode=decode
+
+    # If we have a larger lm model, then use rescore
+    if $lm_large ; then
+        echo "$0: Language model rescore using const arpa file"
+        steps/lmrescore_const_arpa.sh \
+            --cmd "$cmd" $test_dir/../lang_{decode,decode_large} $test_dir $test_dir/decode{,_large}
+        decode="decode_large"
+    fi
 
     printf "#### BEGIN CALCULATE WER ####\n";
 
-    for x in $test_dir/decode; do
+    for x in $test_dir/${decode}; do
         [ -d $x ] && grep "WER" $x/wer_* | utils/best_wer.sh > WER_triphones_${suffix}.txt;
     done
 
@@ -95,7 +104,6 @@ if [ 1 ]; then
     echo "###"
     echo "test dir = $test_dir" >> WER_triphones_${suffix}.txt
 
-fi
 
 exit;
 

@@ -33,6 +33,8 @@ echo "$0: Extracting phonemes from $input_dir/lexicon.txt and saving them to $in
 #cut -d' ' -f3- $input_dir/lexicon.txt | grep -o -E '\w+' | LC_ALL=C sort -u > $input_dir/phones.txt
 cut -d' ' -f2- $input_dir/lexicon.txt |sed s/' '/'\n'/g | sort -u | uniq > $input_dir/phones.txt
 
+# Just in case remove empty lines
+sed -i '/^$/d' $input_dir/phones.txt
 
 # move lexicon files
 local/prepare_dict.sh \
@@ -48,7 +50,7 @@ local/prepare_lang.sh \
     $data_dir/local/dict \
     $data_dir/local/lang \
     $data_dir/lang \
-    "<unk>" \
+    "<UNK>" \
     || printf "\n####\n#### ERROR: prepare_lang.sh\n####\n\n" \
     || exit 1;
 

@@ -10,7 +10,7 @@ To get started, `multi-task-kaldi` should be cloned and moved into the `egs` dir
 
 If you're used to typical Kaldi `egs`, you should know that all the scripts here in `utils` / `local` / `steps` exist in this repo. That is, they do not link back to the `wsj` example. This was done to make custom changes to the scripts, making them more readable.
 
-This repository is adapt from Joshua Meyer (2017) to work with large dataset.
+This repository is adapt from Joshua Meyer (2017) to work with large dataset, compatible with segmented audio and allow large language model.
 
 Creating the `input_task` dir
 ------------------------------------
@@ -34,8 +34,9 @@ input_my-task/
 ├── lexicon  - Directory 
 │    └── lexicon.txt -> /data/my-task/lexicon/lexicon.txt
 └─- lm  - Directory 
+     ├──  [task_large.arpa.gz] -> /data/my-task/lm/task.large.arpa.gz
      └──  task.arpa -> /data/my-task/lm/task.arpa
-3 directories, 6 (+2 optional) files
+3 directories, 6 (+3 optional) files
 ```
 
 Most of these files are standard Kaldi format, and more detailed descriptions of them can be found on [the official docs](http://kaldi-asr.org/doc/data_prep.html).
@@ -43,6 +44,7 @@ Most of these files are standard Kaldi format, and more detailed descriptions of
 
 - `lexicon.txt` // Standard Kaldi // phonetic dictionary with silence phonemes
 - `task.arpa` // Standard Kaldi // language model in ARPA format
+- `task_large.arpa.gz` // Standard Kaldi // Large language model in compressed ARPA format (this is an optional file)
 - `wav_train.scp` // Custom file! // A typical kaldi list of audio files, but with only the train utterances
 - `wav_test.scp` // Custom file! // A typical kaldi  list of audio files, but with only the test utterances
 - `transcripts.test` // Custom file! // A typical Kaldi transcript file, but with only the test utterances

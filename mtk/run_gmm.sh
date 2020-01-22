@@ -73,14 +73,16 @@ num_iters_tri=25
 ##
 #
 num_processors=10 #$(nproc)
-unknown_word="<unk>"
+unknown_word="<UNK>"
 unknown_phone="SPOKEN_NOISE"
-silence_phone="SIL"
+silence_phone="sil"
 input_dir=input_${corpus_name}
 #train_data_dir=`cat $input_dir/train_audio_path`
 #test_data_dir=`cat $input_dir/test_audio_path`
 config_dir=config
 cmd="utils/run.pl"
+is_segments=false # Variable for segment file existance
+lm_large=false # Variable for small language model existance
 #
 ##
 ###
@@ -161,7 +163,6 @@ if [ "$prep_train_audio" -eq "1" ]; then
 
     # Check if there is an segments_train file in the audio directory, if it's
     # the case, apply the same hack here
-    is_segments=false
     if test -f "$input_dir/audio/segments_train" ; then
         echo "$0: Add to utt_id and segments_id a ${corpus_name}_ prefix in segments.train file"
         is_segments=true
@@ -259,15 +260,30 @@ if [ "$compile_graph" -eq "1" ]; then
     printf "#### GRAPH COMPILATION ####\n";
     printf "####===================####\n\n";
 
-    utils/mkgraph.sh \
-        $input_dir \
-        $data_dir \
-        $data_dir/lang_decode \
-        $exp_dir/triphones/graph \
-        $exp_dir/triphones/tree \
-        $exp_dir/triphones/final.mdl \
-        || printf "\n####\n#### ERROR: mkgraph.sh \n####\n\n" \
-        || exit 1;
+    # Check  if there are two language model in the lm fodler
+    if test -f "$input_dir/lm/task_large.arpa.gz" ; then
+        # In this case, that mean that you have a large task.arpa where it isn't possible to make a graph from it
+        # In this case, we make the graph for the task_small.arpa and use lmrescore_const_arpa to compute the
+        # WER on the large one
+
+        #  Set the variable lm_large to true (usefull for decoding)
+        lm_large=true
+
+        # Build the const arpa lm for the large arpa LM
+        utils/build_const_arpa_lm.sh $input_dir/lm/task_large.arpa.gz \
+            $data_dir/lang   $data_dir/lang_decode_large
+
+    fi
+    # Build graph for small or normal size LM
+        utils/mkgraph.sh \
+            $input_dir \
+            $data_dir \
+            $data_dir/lang_decode \
+            $exp_dir/triphones/graph \
+            $exp_dir/triphones/tree \
+            $exp_dir/triphones/final.mdl \
+            || printf "\n####\n#### ERROR: mkgraph.sh \n####\n\n" \
+            || exit 1;
 
 fi
 
@@ -291,7 +307,7 @@ if [ "$prep_test_audio" -eq "1" ]; then
     else
 
         local/prepare_audio_data.sh \
-            $input_dir/audio/wav_test_tmp.scp \
+            $input_dir/audio/wav_test.scp \
             $input_dir/audio/transcripts.test \
             $data_dir \
             test
@@ -323,13 +339,13 @@ if [ "$decode_test" -eq "1" ]; then
     printf "####================####\n\n";
 
     suffix=${corpus_name}_${run}
-
     ./test_gmm.sh \
         $exp_dir/triphones/graph/HCLG.fst \
         $exp_dir/triphones/final.mdl \
         $data_dir/test \
         $suffix \
-        $num_processors;
+        $num_processors \
+        $lm_large;
 
 fi
 

@@ -118,26 +118,6 @@ if $is_segments;then
 fi
 
 #clean up temp files
-#rm -rf $local_dir/tmp
+rm -rf $local_dir/tmp
 
 
-#echo "$0: Preparation done, print informations"
-###                 ###
-### Print some info ###
-###                 ###
-
-## get total number of seconds of WAVs in wav.scp
-#TOTAL_SECS=0
-#while IFS='' read -r line || [[ -n "$line" ]]; do
-#    line=( $line )
-#    file=${line[1]}
-#    SECS="$( soxi -D $file )"
-#    TOTAL_SECS=$( echo "$TOTAL_SECS + $SECS" | bc )
-#done < "$data_dir/$data_type/wav.scp"
-
-# Calculate hours and print to screen
-#total_hours=$( echo "scale=2;$TOTAL_SECS / 60 / 60" | bc )
-#echo ""
-#echo " $total_hours hours of audio for training "
-#echo " in $data_dir/$data_type/wav.scp"
-#echo ""
